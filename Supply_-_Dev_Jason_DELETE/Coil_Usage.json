@@ -19,3 +19,4 @@
 {"name":"6ebf769d-d8ef-4006-8763-c60253c0b5ce","type":"map","col":21,"row":15,"colspan":15,"rowspan":7,"bounds":{"x":58.333333333333336,"y":44.11764705882353,"width":41.66666666666667,"height":20.58823529411765}}
 {"name":"9a06982d-034c-4fe9-b1fb-02901450e759","type":"filterpane","col":9,"row":3,"colspan":4,"rowspan":1,"bounds":{"x":25,"y":8.823529411764707,"width":11.11111111111111,"height":2.9411764705882355}}
 {"name":"9dc33d41-7d4c-4a8d-a5db-49062795a740","type":"filterpane","col":13,"row":3,"colspan":4,"rowspan":1,"bounds":{"x":36.11111111111111,"y":8.823529411764707,"width":11.11111111111111,"height":2.9411764705882355}}
+{"name":"3c1f7e5b-f1ff-43ee-99a4-55a310711e23","type":"action-button","col":23,"row":3,"colspan":3,"rowspan":1,"bounds":{"x":63.888888888888886,"y":8.823529411764707,"width":8.333333333333332,"height":2.9411764705882355}}
