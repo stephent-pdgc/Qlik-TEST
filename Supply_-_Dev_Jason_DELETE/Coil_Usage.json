@@ -48,3 +48,4 @@
 {"name":"c7668a3d-0af4-4e20-9d4a-c9c411b79221","type":"pivot-table","col":0,"row":15,"colspan":36,"rowspan":8,"bounds":{"y":41.66666666666667,"x":0,"width":100,"height":22.22222222222222}}
 {"name":"9e68526c-bb8e-428a-8a61-a51092cb47bc","type":"kpi","col":0,"row":12,"colspan":9,"rowspan":3,"bounds":{"y":33.33333333333333,"x":0,"width":25,"height":8.333333333333332}}
 {"name":"57a0ebdd-88c7-4d9f-99ab-a6019e70faad","type":"kpi","col":9,"row":12,"colspan":9,"rowspan":3,"bounds":{"y":33.33333333333333,"x":25,"width":25,"height":8.333333333333332}}
+{"name":"9de7d873-d901-4c50-830a-13b256720bde","type":"table","col":0,"row":23,"colspan":36,"rowspan":13,"bounds":{"y":63.888888888888886,"x":0,"width":100,"height":36.11111111111111}}
