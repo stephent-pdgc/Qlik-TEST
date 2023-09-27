@@ -76,3 +76,4 @@
 {"name":"86dd25ad-d982-4061-b311-7b22bf34f821","type":"pivot-table","col":0,"row":15,"colspan":36,"rowspan":8,"bounds":{"y":41.66666666666667,"x":0,"width":100,"height":22.22222222222222}}
 {"name":"c2dee311-cfaf-4b05-8e6a-30b4c14c3362","type":"kpi","col":0,"row":12,"colspan":18,"rowspan":3,"bounds":{"y":33.33333333333333,"x":0,"width":50,"height":8.333333333333332}}
 {"name":"69e7b689-cc45-4679-8a2f-93c544decba3","type":"kpi","col":18,"row":12,"colspan":18,"rowspan":3,"bounds":{"y":33.33333333333333,"x":50,"width":50,"height":8.333333333333332}}
+{"name":"935f975a-a228-465f-bff4-f08e8b451df2","type":"table","col":0,"row":23,"colspan":36,"rowspan":13,"bounds":{"y":63.888888888888886,"x":0,"width":100,"height":36.11111111111111}}
