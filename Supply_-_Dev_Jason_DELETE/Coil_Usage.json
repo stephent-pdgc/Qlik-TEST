@@ -2,3 +2,4 @@
 {"name":"425b099d-da2f-4d4e-aeda-7178b5095e5a","type":"action-button","col":4,"row":0,"colspan":2,"rowspan":1,"bounds":{"x":11.11111111111111,"y":0,"width":5.555555555555555,"height":2.9411764705882355}}
 {"name":"da16b2ca-73b7-4f6d-bb1e-aceb02a688a3","type":"action-button","col":9,"row":4,"colspan":7,"rowspan":1,"bounds":{"y":11.76470588235294,"x":25,"width":19.444444444444446,"height":2.941176470588235}}
 {"name":"eEmMef","type":"action-button","col":16,"row":4,"colspan":7,"rowspan":1,"bounds":{"y":11.76470588235294,"x":44.44444444444444,"width":19.444444444444446,"height":2.941176470588235}}
+{"name":"b4017036-3ab3-4f4c-9113-f7bf085847f9","type":"kpi","col":17,"row":1,"colspan":6,"rowspan":2,"bounds":{"x":47.22222222222222,"y":2.9411764705882355,"width":16.666666666666664,"height":5.882352941176471}}
