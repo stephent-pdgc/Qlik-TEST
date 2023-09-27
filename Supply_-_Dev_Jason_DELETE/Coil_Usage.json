@@ -72,3 +72,4 @@
 {"name":"JAYvRqM","type":"action-button","col":0,"row":1,"colspan":3,"rowspan":1,"bounds":{"y":2.7777777777777777,"x":0,"width":8.333333333333332,"height":2.7777777777777777}}
 {"name":"BrNJdfZ","type":"action-button","col":0,"row":2,"colspan":3,"rowspan":1,"bounds":{"y":5.555555555555555,"x":0,"width":8.333333333333332,"height":2.7777777777777777}}
 {"name":"zPLqD","type":"qlik-variable-input","col":6,"row":1,"colspan":3,"rowspan":2,"bounds":{"y":2.7777777777777777,"x":16.666666666666664,"width":8.333333333333332,"height":5.555555555555555}}
+{"name":"9c400b12-5a36-4b5f-a276-55a3a2c89b2c","type":"gauge","col":0,"row":3,"colspan":36,"rowspan":9,"bounds":{"y":8.333333333333332,"x":0,"width":100,"height":25}}
