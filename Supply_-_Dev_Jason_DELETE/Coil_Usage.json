@@ -345,3 +345,4 @@
 {"name":"35793ba5-d778-429b-b0ad-fe6b4ce22a8e","type":"action-button","col":13,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":36.11111111111111,"width":5.555555555555555,"height":2.564102564102564}}
 {"name":"1f85131b-cd31-4d79-8778-4f3d14ce1bd5","type":"action-button","col":17,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":47.22222222222222,"width":5.555555555555555,"height":2.564102564102564}}
 {"name":"5908c948-a1ac-4a3e-b7d7-d8bb8efc8735","type":"action-button","col":32,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":88.88888888888889,"width":5.555555555555555,"height":2.564102564102564}}
+{"name":"397c270f-129d-4649-8c60-23ff2037c372","type":"action-button","col":21,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":58.333333333333336,"width":5.555555555555555,"height":2.564102564102564}}
