@@ -46,3 +46,4 @@
 {"name":"cb838ce5-9264-4949-b082-102e32c4c3dd","type":"gauge","col":0,"row":3,"colspan":18,"rowspan":9,"bounds":{"y":8.333333333333332,"x":0,"width":50,"height":25}}
 {"name":"8cfa33f5-d6a2-4151-9a78-abb2c2016150","type":"gauge","col":18,"row":3,"colspan":18,"rowspan":9,"bounds":{"y":8.333333333333332,"x":50,"width":50,"height":25}}
 {"name":"c7668a3d-0af4-4e20-9d4a-c9c411b79221","type":"pivot-table","col":0,"row":15,"colspan":36,"rowspan":8,"bounds":{"y":41.66666666666667,"x":0,"width":100,"height":22.22222222222222}}
+{"name":"9e68526c-bb8e-428a-8a61-a51092cb47bc","type":"kpi","col":0,"row":12,"colspan":9,"rowspan":3,"bounds":{"y":33.33333333333333,"x":0,"width":25,"height":8.333333333333332}}
