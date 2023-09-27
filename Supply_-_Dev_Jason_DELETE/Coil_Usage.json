@@ -103,3 +103,4 @@
 {"name":"210db530-dedc-49cc-9f6b-e264cd9a6331","type":"filterpane","col":0,"row":0,"colspan":4,"rowspan":10,"bounds":{"y":0,"x":0,"width":11.11111111111111,"height":25.64102564102564}}
 {"name":"GKJpvPX","type":"kpi","col":14,"row":1,"colspan":6,"rowspan":2,"bounds":{"x":38.88888888888889,"y":2.564102564102564,"width":16.666666666666664,"height":5.128205128205128}}
 {"name":"f30167b7-838f-4522-8309-01173cf00047","type":"kpi","col":8,"row":1,"colspan":6,"rowspan":2,"bounds":{"x":22.22222222222222,"y":2.564102564102564,"width":16.666666666666664,"height":5.128205128205128}}
+{"name":"jvjJX","type":"kpi","col":26,"row":1,"colspan":6,"rowspan":2,"bounds":{"y":2.564102564102564,"x":72.22222222222221,"width":16.666666666666664,"height":5.128205128205128}}
