@@ -273,3 +273,4 @@
 {"name":"2980f892-f7ad-42f3-8173-cd0a124599a0","type":"action-button","col":23,"row":0,"colspan":1,"rowspan":1,"bounds":{"y":0,"x":63.888888888888886,"width":2.7777777777777777,"height":5.555555555555555}}
 {"name":"SusuLk","type":"kpi","col":4,"row":1,"colspan":10,"rowspan":2,"bounds":{"y":5.555555555555555,"x":11.11111111111111,"width":27.77777777777778,"height":11.11111111111111}}
 {"name":"HZzX","type":"kpi","col":14,"row":1,"colspan":10,"rowspan":2,"bounds":{"y":5.555555555555555,"x":38.88888888888889,"width":27.77777777777778,"height":11.11111111111111}}
+{"name":"KMQCvU","type":"action-button","col":24,"row":1,"colspan":12,"rowspan":1,"bounds":{"y":5.555555555555555,"x":66.66666666666666,"width":33.33333333333333,"height":5.555555555555555}}
