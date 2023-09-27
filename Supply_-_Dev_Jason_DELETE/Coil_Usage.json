@@ -95,3 +95,4 @@
 {"name":"71b549ec-3d1a-44f8-aac4-18b7ca845ba4","type":"action-button","col":9,"row":1,"colspan":14,"rowspan":2,"bounds":{"y":2.7777777777777777,"x":25,"width":38.88888888888889,"height":5.555555555555555}}
 {"name":"4d8e0ec6-dae0-479d-ba10-ecb4d5c0d40e","type":"qlik-variable-input","col":3,"row":1,"colspan":3,"rowspan":2,"bounds":{"y":2.7777777777777777,"x":8.333333333333332,"width":8.333333333333332,"height":5.555555555555555}}
 {"name":"a4d9c83b-e8b6-4dd8-afaf-4567b15bdcae","type":"action-button","col":32,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":88.88888888888889,"width":5.555555555555555,"height":2.7777777777777777}}
+{"name":"85256bdf-c364-4c6b-8bee-eac38c9938fd","type":"action-button","col":0,"row":1,"colspan":3,"rowspan":1,"bounds":{"y":2.7777777777777777,"x":0,"width":8.333333333333332,"height":2.7777777777777777}}
