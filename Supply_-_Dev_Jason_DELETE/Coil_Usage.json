@@ -476,3 +476,4 @@
 {"name":"yrpwDu","type":"pivot-table","col":1,"row":22,"colspan":34,"rowspan":11,"bounds":{"y":50,"x":2.7777777777777777,"width":94.44444444444444,"height":25}}
 {"name":"FPSTJ","type":"action-button","col":15,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":41.66666666666667,"width":5.555555555555555,"height":2.272727272727273}}
 {"name":"nPVm","type":"action-button","col":10,"row":0,"colspan":3,"rowspan":1,"bounds":{"y":0,"x":27.77777777777778,"width":8.333333333333332,"height":2.272727272727273}}
+{"name":"HVRp","type":"action-button","col":19,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":52.77777777777778,"width":5.555555555555555,"height":2.272727272727273}}
