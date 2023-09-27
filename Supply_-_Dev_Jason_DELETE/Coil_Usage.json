@@ -448,3 +448,4 @@
 {"name":"15bb1f64-ea24-451a-93f8-1c8a7ab9a67d","type":"qlik-date-picker","col":5,"row":3,"colspan":4,"rowspan":1,"bounds":{"x":13.88888888888889,"y":6.818181818181819,"width":11.11111111111111,"height":2.272727272727273}}
 {"name":"b32cdfdb-38d9-4200-8ea9-7a72cc3aa525","type":"action-button","col":5,"row":14,"colspan":4,"rowspan":1,"bounds":{"x":13.88888888888889,"y":31.81818181818182,"width":11.11111111111111,"height":2.272727272727273}}
 {"name":"7384a442-6956-4d26-8095-8841cbf89e76","type":"action-button","col":9,"row":14,"colspan":4,"rowspan":1,"bounds":{"x":25,"y":31.81818181818182,"width":11.11111111111111,"height":2.272727272727273}}
+{"name":"84c7d97b-5a74-4b15-b0fc-399e0259205c","type":"action-button","col":13,"row":14,"colspan":4,"rowspan":1,"bounds":{"x":36.11111111111111,"y":31.81818181818182,"width":11.11111111111111,"height":2.272727272727273}}
