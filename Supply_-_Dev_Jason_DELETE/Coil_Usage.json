@@ -44,3 +44,4 @@
 {"name":"PbV","type":"action-button","col":8,"row":14,"colspan":4,"rowspan":1,"bounds":{"y":41.17647058823529,"x":22.22222222222222,"width":11.11111111111111,"height":2.941176470588235}}
 {"name":"CeDYURV","type":"action-button","col":8,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":22.22222222222222,"width":5.555555555555555,"height":2.941176470588235}}
 {"name":"cb838ce5-9264-4949-b082-102e32c4c3dd","type":"gauge","col":0,"row":3,"colspan":18,"rowspan":9,"bounds":{"y":8.333333333333332,"x":0,"width":50,"height":25}}
+{"name":"8cfa33f5-d6a2-4151-9a78-abb2c2016150","type":"gauge","col":18,"row":3,"colspan":18,"rowspan":9,"bounds":{"y":8.333333333333332,"x":50,"width":50,"height":25}}
