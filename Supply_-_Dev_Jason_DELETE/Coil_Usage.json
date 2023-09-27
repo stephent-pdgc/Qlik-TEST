@@ -565,3 +565,4 @@
 {"name":"66bd1b13-840b-40ee-b549-584a7a923252","type":"map","col":21,"row":15,"colspan":15,"rowspan":7,"bounds":{"y":33.33333333333333,"x":58.333333333333336,"width":41.66666666666667,"height":15.555555555555555}}
 {"name":"4b8e0250-2c47-4622-b769-ee5e583f41c3","type":"filterpane","col":9,"row":3,"colspan":4,"rowspan":1,"bounds":{"x":25,"y":6.666666666666666,"width":11.11111111111111,"height":2.2222222222222223}}
 {"name":"bed33083-4293-45b6-ab56-437711b07079","type":"filterpane","col":13,"row":3,"colspan":4,"rowspan":1,"bounds":{"x":36.11111111111111,"y":6.666666666666666,"width":11.11111111111111,"height":2.2222222222222223}}
+{"name":"aa5fbfd1-335f-4f0d-b75c-c3e489e6d186","type":"action-button","col":13,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":36.11111111111111,"width":5.555555555555555,"height":2.2222222222222223}}
