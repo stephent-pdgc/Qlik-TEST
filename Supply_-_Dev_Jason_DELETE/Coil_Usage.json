@@ -77,3 +77,4 @@
 {"name":"c2dee311-cfaf-4b05-8e6a-30b4c14c3362","type":"kpi","col":0,"row":12,"colspan":18,"rowspan":3,"bounds":{"y":33.33333333333333,"x":0,"width":50,"height":8.333333333333332}}
 {"name":"69e7b689-cc45-4679-8a2f-93c544decba3","type":"kpi","col":18,"row":12,"colspan":18,"rowspan":3,"bounds":{"y":33.33333333333333,"x":50,"width":50,"height":8.333333333333332}}
 {"name":"935f975a-a228-465f-bff4-f08e8b451df2","type":"table","col":0,"row":23,"colspan":36,"rowspan":13,"bounds":{"y":63.888888888888886,"x":0,"width":100,"height":36.11111111111111}}
+{"name":"159d2035-73fd-44d4-acc4-56170893dc07","type":"action-button","col":4,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":11.11111111111111,"width":5.555555555555555,"height":2.7777777777777777}}
