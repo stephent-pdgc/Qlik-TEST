@@ -231,3 +231,4 @@
 {"name":"fd5991b2-6276-43a6-8e14-a9834e36b074","type":"action-button","col":32,"row":3,"colspan":3,"rowspan":1,"bounds":{"x":88.88888888888889,"y":8.571428571428571,"width":8.333333333333332,"height":2.857142857142857}}
 {"name":"95e69550-7670-4848-9a1a-9a0a324de569","type":"qlik-date-picker","col":5,"row":3,"colspan":4,"rowspan":1,"bounds":{"x":13.88888888888889,"y":8.571428571428573,"width":11.11111111111111,"height":2.857142857142857}}
 {"name":"9d4bd594-fc8e-4977-bd86-0cbdcfacad7e","type":"action-button","col":4,"row":14,"colspan":4,"rowspan":1,"bounds":{"y":40,"x":11.11111111111111,"width":11.11111111111111,"height":2.857142857142857}}
+{"name":"244b6b8d-9190-4028-8331-8b3c5272e758","type":"action-button","col":8,"row":14,"colspan":4,"rowspan":1,"bounds":{"y":40,"x":22.22222222222222,"width":11.11111111111111,"height":2.857142857142857}}
