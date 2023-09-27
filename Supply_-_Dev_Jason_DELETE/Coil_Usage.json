@@ -167,3 +167,4 @@
 {"name":"jzjXp","type":"qlik-variable-input","col":0,"row":0,"colspan":4,"rowspan":2,"bounds":{"y":0,"x":0,"width":11.11111111111111,"height":4.3478260869565215}}
 {"name":"QfndyB","type":"container","col":1,"row":24,"colspan":17,"rowspan":11,"bounds":{"y":52.17391304347826,"x":2.7777777777777777,"width":47.22222222222222,"height":23.91304347826087}}
 {"name":"TQNC","type":"action-button","col":28,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":77.77777777777779,"width":5.555555555555555,"height":2.1739130434782608}}
+{"name":"xmKVjN","type":"action-button","col":31,"row":14,"colspan":4,"rowspan":1,"bounds":{"y":30.434782608695656,"x":86.11111111111111,"width":11.11111111111111,"height":2.1739130434782608}}
