@@ -246,3 +246,4 @@
 {"name":"c2c2d61c-a58a-4e4d-8ec7-cfd792cec521","type":"action-button","col":34,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":94.44444444444444,"width":5.555555555555555,"height":2.857142857142857}}
 {"name":"1e77a5aa-b257-4982-9360-b99195cfb1dd","type":"action-button","col":17,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":47.22222222222222,"width":5.555555555555555,"height":2.857142857142857}}
 {"name":"0be10eeb-7f5d-40da-81c1-41c5b795072e","type":"action-button","col":32,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":88.88888888888889,"width":5.555555555555555,"height":2.857142857142857}}
+{"name":"2495e244-0733-48d3-a805-1e9e52986c75","type":"action-button","col":21,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":58.333333333333336,"width":5.555555555555555,"height":2.857142857142857}}
