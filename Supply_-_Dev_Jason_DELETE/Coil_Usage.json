@@ -51,3 +51,4 @@
 {"name":"9de7d873-d901-4c50-830a-13b256720bde","type":"table","col":0,"row":23,"colspan":36,"rowspan":13,"bounds":{"y":63.888888888888886,"x":0,"width":100,"height":36.11111111111111}}
 {"name":"hXcCv","type":"kpi","col":18,"row":12,"colspan":9,"rowspan":3,"bounds":{"y":33.33333333333333,"x":50,"width":25,"height":8.333333333333332}}
 {"name":"mTUg","type":"kpi","col":27,"row":12,"colspan":9,"rowspan":3,"bounds":{"y":33.33333333333333,"x":75,"width":25,"height":8.333333333333332}}
+{"name":"aYmTt","type":"action-button","col":4,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":11.11111111111111,"width":5.555555555555555,"height":2.7777777777777777}}
