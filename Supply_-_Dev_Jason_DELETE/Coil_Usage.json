@@ -171,3 +171,4 @@
 {"name":"pnBYkm","type":"auto-chart","col":12,"row":1,"colspan":8,"rowspan":2,"bounds":{"y":2.1739130434782608,"x":33.33333333333333,"width":22.22222222222222,"height":4.3478260869565215}}
 {"name":"QzHhex","type":"kpi","col":4,"row":1,"colspan":8,"rowspan":2,"bounds":{"y":2.1739130434782608,"x":11.11111111111111,"width":22.22222222222222,"height":4.3478260869565215}}
 {"name":"gfUdp","type":"kpi","col":20,"row":1,"colspan":8,"rowspan":2,"bounds":{"y":2.1739130434782608,"x":55.55555555555556,"width":22.22222222222222,"height":4.3478260869565215}}
+{"name":"vctmh","type":"action-button","col":23,"row":0,"colspan":1,"rowspan":1,"bounds":{"y":0,"x":63.888888888888886,"width":2.7777777777777777,"height":2.1739130434782608}}
