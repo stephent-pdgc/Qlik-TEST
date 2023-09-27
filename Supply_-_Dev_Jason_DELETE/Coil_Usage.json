@@ -73,3 +73,4 @@
 {"name":"BrNJdfZ","type":"action-button","col":0,"row":2,"colspan":3,"rowspan":1,"bounds":{"y":5.555555555555555,"x":0,"width":8.333333333333332,"height":2.7777777777777777}}
 {"name":"zPLqD","type":"qlik-variable-input","col":6,"row":1,"colspan":3,"rowspan":2,"bounds":{"y":2.7777777777777777,"x":16.666666666666664,"width":8.333333333333332,"height":5.555555555555555}}
 {"name":"9c400b12-5a36-4b5f-a276-55a3a2c89b2c","type":"gauge","col":0,"row":3,"colspan":36,"rowspan":9,"bounds":{"y":8.333333333333332,"x":0,"width":100,"height":25}}
+{"name":"86dd25ad-d982-4061-b311-7b22bf34f821","type":"pivot-table","col":0,"row":15,"colspan":36,"rowspan":8,"bounds":{"y":41.66666666666667,"x":0,"width":100,"height":22.22222222222222}}
