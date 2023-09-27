@@ -68,3 +68,4 @@
 {"name":"pryCeVu","type":"action-button","col":8,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":22.22222222222222,"width":5.555555555555555,"height":2.7777777777777777}}
 {"name":"vnhVrY","type":"action-button","col":9,"row":1,"colspan":14,"rowspan":2,"bounds":{"y":2.7777777777777777,"x":25,"width":38.88888888888889,"height":5.555555555555555}}
 {"name":"hNRA","type":"qlik-variable-input","col":3,"row":1,"colspan":3,"rowspan":2,"bounds":{"y":2.7777777777777777,"x":8.333333333333332,"width":8.333333333333332,"height":5.555555555555555}}
+{"name":"tXcmcT","type":"action-button","col":32,"row":0,"colspan":2,"rowspan":1,"bounds":{"y":0,"x":88.88888888888889,"width":5.555555555555555,"height":2.7777777777777777}}
