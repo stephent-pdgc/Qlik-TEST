@@ -1,31 +1,4 @@
 SHEETS
-
-DIMENSIONS
-
-MEASURES
-
-VARIABLES
-
-FIELDS
-SHEETS
-
-DIMENSIONS
-
-MEASURES
-
-VARIABLES
-
-FIELDS
-SHEETS
-
-DIMENSIONS
-
-MEASURES
-
-VARIABLES
-
-FIELDS
-SHEETS
 Coil Usage
 {"qInfo":{"qId":"95099767-cb96-49ba-bcc3-2d0dbe4fb398","qType":"sheet"},"qMeta":{"title":"Coil Usage","description":"","_resourcetype":"app.object","_objecttype":"sheet","id":"95099767-cb96-49ba-bcc3-2d0dbe4fb398","approved":false,"published":true,"owner":"qa3NTvAIegTk79GsCB46-ZEtNknLCh87nhta57ib8_U","ownerId":"6511cf7cd93ee102abf96dae","createdDate":"2023-09-28T19:03:26.667Z","modifiedDate":"2023-09-28T19:03:26.667Z","publishTime":"2023-02-09T01:32:09.800Z","privileges":["read","publish","change_owner"]},"qData":[]}
 {"name":"bef4fe93-f7e9-47b2-9dbb-8d760dc9d1d8","type":"action-button","col":6,"row":0,"colspan":2,"rowspan":1,"bounds":{"x":16.666666666666664,"y":0,"width":5.555555555555555,"height":2.9411764705882355}}
