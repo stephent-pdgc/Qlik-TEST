@@ -1,0 +1,1281 @@
+///$tab 0.0 Change Log
+/*****************************************************************************************************************************************\
+* 
+*	Name:    	Raymond - Supply
+*	Author:  	Adelayde Rome
+*	Desc:    	Presentation App for Supply
+*
+/*****************************************************************************************************************************************/
+
+// Update this version control table after each edit. Avoid using the ; delimiter in your change log.
+Island_VersionControl:
+LOAD
+    *
+INLINE [
+%Ver_Version; %Ver_Date; %Ver_Author; %Ver_Change
+0.1; 2021-12-1; JWU; Supply Initial development
+] (delimiter is ';');
+
+// Do not edit the section below as this loads and sets the version variable in the app using the table above
+// Identify the maximum version
+Temp_Version:
+LOAD
+    Max(%Ver_Version) AS Temp_Max_Version
+RESIDENT Island_VersionControl;
+
+ 
+
+// Set the version variable
+LET vVersion = Peek('Temp_Max_Version',0,'Temp_Version');
+
+ 
+
+// Drop the temporary table
+DROP TABLE Temp_Version;
+
+
+///$tab 0.1 Section Access
+// Section Access;
+// Authorization:
+// // Load * INLINE [
+// // 	ACCESS,	USERNAME,	USERID,	GROUP,			%LOCATION,	%PRODUCTIONLOCATION,	%STEELLOCATION,	%PORECEIPTLOCATION,	%ONHANDLOCATION,	%FGRECEIPTLOCATION
+// // 	ADMIN,	All,		*,		Qlik Access
+// // 	USER,   IND,		*,		Qlik-IND,		IND,		IND,					IND,			IND,				IND,				IND
+// // 	USER,   PIT,		*,		Qlik-PIT,		PIT,		PIT,					PIT,			PIT,				PIT,				PIT
+// // 	USER,   DEN,		*,		Qlik-DEN,		DEN,		DEN,					DEN,			DEN,				DEN,				DEN
+// // 	USER,   FTW,		*,		Qlik-FTW,		FTW,		FTW,					FTW,			FTW,				FTW,				FTW
+// // ];
+
+// Load * INLINE [
+// 	ACCESS,	USERNAME,	USERID,	GROUP,			%LOCATION
+// 	ADMIN,	All,		*,		Qlik Access
+// 	USER,   IND,		*,		Qlik-IND,		IND
+// 	USER,   PIT,		*,		Qlik-PIT,		PIT
+// 	USER,   DEN,		*,		Qlik-DEN,		DEN
+// 	USER,   FTW,		*,		Qlik-FTW,		FTW
+// ];
+
+
+// Section Application;
+///$tab 0.5 Space Details
+// 1.  Get the app ID
+LET appId = DocumentName();
+Let appName = DocumentTitle();
+
+//****set connection to use for this tenant.*****//
+Set vu_tenant_fqdn = 'uyfh4gf54f4nm8d.us.qlikcloud.com';  //update your tenant host name
+Set vu_rest_connection = 'Monitoring Apps - Dev:REST For Monitoring Analysis'; //update the space name if needed
+Set vNextURL = '';
+LIB Connect To '$(vu_rest_connection)';
+
+
+// set the endpoint for app details
+Set baseURL= "https://$(vu_tenant_fqdn)/api/v1/apps/$(appId)";
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"spaceId",
+		"_resourcetype",
+		"__KEY_attributes",
+		"__FK_attributes",
+		(SELECT 
+			"__FK_custom"
+		FROM "custom" FK "__FK_custom")
+	FROM "attributes" PK "__KEY_attributes" FK "__FK_attributes")
+FROM JSON (wrap on) "root" PK "__KEY_root"
+ WITH CONNECTION (  
+      URL "$(baseURL)?$(vNextURL)"
+      );
+
+AppDetails:
+    Load	
+        If(len(spaceId)=0,'Personal',spaceId) as SpaceId
+    Resident RestConnectorMasterTable
+    WHERE NOT IsNull([__FK_attributes]);
+
+DROP TABLE RestConnectorMasterTable;
+
+let vSpaceId = peek('SpaceId');
+trace spaceId = $(vSpaceId);
+
+drop table AppDetails;
+
+if '$(vSpaceId)' <> 'Personal' then
+
+  // set the endpoint for space details
+  Set baseURL= "https://$(vu_tenant_fqdn)/api/v1/spaces/$(vSpaceId)";
+
+  //LIB Connect To '$(vu_rest_connection)';
+
+  RestConnectorMasterTable:
+  SQL SELECT 
+  //	"id",
+      "type",
+  //	"ownerId",
+  //	"tenantId",
+      "name",
+      "description",
+  // 	"createdAt",
+  // 	"createdBy",
+  // 	"updatedAt",
+      "__KEY_root"
+  FROM JSON (wrap on) "root" PK "__KEY_root"
+  WITH CONNECTION (  
+        URL "$(baseURL)?$(vNextURL)"
+        );
+
+  [space]:
+  LOAD
+      [type] as spaceType,
+      [name] as spaceName,
+      [description] as spaceDescription
+  RESIDENT RestConnectorMasterTable
+  WHERE NOT IsNull([__KEY_root]);
+
+  DROP TABLE RestConnectorMasterTable;
+
+  let vSpaceType = peek('spaceType');
+  let vSpacePrefix = left(peek('spaceName'),2);
+  let vSpaceName = peek('spaceName');
+  let vspaceDescription = peek('spaceDescription');
+  drop Table space;
+else
+	let vSpaceType = 'Personal';
+  let vSpaceName = 'Personal';
+  let vspaceDescription = 'Personal';
+end if
+
+trace ###################################;
+trace Name = $(appName);
+trace ID = $(appId);
+trace SpacePrefix = $(vSpacePrefix); 
+trace spaceName = $(vSpaceName);
+trace spaceDescription = $(vspaceDescription);
+trace SpaceType = $(vSpaceType);
+trace ###################################;
+///$tab 0.6 Security
+Users:
+LOAD * Inline [
+	UserName, 		UserId
+    jwu, 			xlKCDhZO6H0gv15N-YlEFKhO5UrnFji_Gw8vLXD-a1I
+    arome, 			smFnIeCLYN7Mof9REN2E4UXOqB_zguKSBQiXsvqhVWM
+    tstachura,		CbuT-KzBTAntWIdIPlJSB8wJwse3uUs6_rgeL-S4jhM
+    nmiles,			KxJFfZCSjNh8rZfO9n-Xj9AeMQAygjxHjsEV726ZnLo
+    rschimpf,		GPVq_zjRKS2iijJdtIg-JhWTzGC0yXZWH2wDsFFp-do
+    rsharma,		-2er36VRMUE_M7DUJ_LAUJZ9w1KdxqfhWMLJYVZJRD4
+    pghonge,		wbCE7fZlSPwqW5OBisZA_Tq7gSnCStpQs9KahyMpQJA
+    ssuryawanshi,	X-PZnrVxmk2-kTI8Y251XZy18ga46E-EZz8hDn9-pGc
+    tpoliquin,		uYvNSOdsKNG4qACjs5YhXzBEck2lEDxKG09nRzS0-g8
+    tporter,		Q66XQuzlKHfB2nnMID6fkc79HwHqgiPIwINMRMy1iyA
+    tdelpit,		iXFq_ZQRRqLhBtS2MFsfVRKzHu62cb2loziOMe5wmTo
+    syessner,		8KcP0a7kLyRAwcisP81ug3TFcJuZfQyzhNk9fLh_7fc
+    jcook,			gdjZ95WWFXQG7lvRPIcEcr0q0iM7NaAInhlJQdBmih0
+    zkinnoin,		RJ37XagsBkMXdYzwLdTLVXeLBMbK-7nyucTHdUoRyO8
+    mherring,		oxA6d16oY69BhlJPiWwexej7xYLf75RzjjdUxkrlc94
+];
+
+
+[BookedTonsUsers]:
+LOAD * Inline [
+	BTUserName, 	BTUserId
+    jwu, 			xlKCDhZO6H0gv15N-YlEFKhO5UrnFji_Gw8vLXD-a1I
+	arome, 			smFnIeCLYN7Mof9REN2E4UXOqB_zguKSBQiXsvqhVWM
+    tstachura,		CbuT-KzBTAntWIdIPlJSB8wJwse3uUs6_rgeL-S4jhM
+    nmiles,			KxJFfZCSjNh8rZfO9n-Xj9AeMQAygjxHjsEV726ZnLo
+    rschimpf,		GPVq_zjRKS2iijJdtIg-JhWTzGC0yXZWH2wDsFFp-do
+    rsharma,		-2er36VRMUE_M7DUJ_LAUJZ9w1KdxqfhWMLJYVZJRD4
+    pghonge,		wbCE7fZlSPwqW5OBisZA_Tq7gSnCStpQs9KahyMpQJA
+    ssuryawanshi,	X-PZnrVxmk2-kTI8Y251XZy18ga46E-EZz8hDn9-pGc
+    tdelpit,		iXFq_ZQRRqLhBtS2MFsfVRKzHu62cb2loziOMe5wmTo
+    jcook,			gdjZ95WWFXQG7lvRPIcEcr0q0iM7NaAInhlJQdBmih0
+    zkinnoin,		RJ37XagsBkMXdYzwLdTLVXeLBMbK-7nyucTHdUoRyO8
+    lchirinos,		FQ2CGdOeJ-L0lRIyBF4Qmn5tUoJ2haQq0f2lQubvl8Y
+];
+///$tab 1.0  Configuration
+SET ThousandSep=',';
+SET DecimalSep='.';
+SET MoneyThousandSep=',';
+SET MoneyDecimalSep='.';
+SET MoneyFormat='$ ###0.00;-$ ###0.00';
+SET TimeFormat='h:mm:ss TT';
+SET DateFormat='M/D/YYYY';
+SET TimestampFormat='M/D/YYYY h:mm:ss[.fff] TT';
+SET FirstWeekDay=6;
+SET BrokenWeeks=0;
+SET ReferenceDay=0;
+SET FirstMonthOfYear=1;
+SET CollationLocale='en-US';
+SET CreateSearchIndexOnReload=1;
+SET MonthNames='Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec';
+SET LongMonthNames='January;February;March;April;May;June;July;August;September;October;November;December';
+SET DayNames='Mon;Tue;Wed;Thu;Fri;Sat;Sun';
+SET LongDayNames='Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday';
+SET NumericalAbbreviation='3:k;6:M;9:G;12:T;15:P;18:E;21:Z;24:Y;-3:m;-6:μ;-9:n;-12:p;-15:f;-18:a;-21:z;-24:y';
+
+
+/**  CONFIGURATION CHANGES REQUIRED PRE RELOAD**/
+
+if $(vSpacePrefix) = '01' then 
+  Let vPathDataSource='lib://01.Extract:AWS-BI-S3/Qlik-Dev/';
+  Let vPathExtractQVDs='lib://01.Extract:DataFiles/';
+  Let vPathTransformQVDs='lib://01.Transform:DataFiles/';
+else
+  if $(vSpacePrefix) = '02' then 
+    Let vPathDataSource='lib://02.Extract:AWS-BI-S3/Qlik-Test/';
+    Let vPathExtractQVDs='lib://02.Extract:DataFiles/';
+    Let vPathTransformQVDs='lib://02.Transform:DataFiles/';
+else
+    Let vPathDataSource='lib://03.Extract:AWS-BI-S3/Qlik-Prod/';
+    Let vPathExtractQVDs='lib://03.Extract:DataFiles/';
+    Let vPathTransformQVDs='lib://03.Transform:DataFiles/';
+    end if
+end if
+
+TRACE vPathDataSource = $(vPathDataSource);
+TRACE vPathExtractQVDs = $(vPathExtractQVDs);
+TRACE vPathTransformQVDs = $(vPathTransformQVDs);
+TRACE ###################################;
+
+///$tab 2.0 Load Tables
+// Load and retain the tables comprising the data model:
+
+[PurchaseOrder]: 
+Load
+    PurchaseOrderPurchaseOrderID							AS [PO ID],
+    PurchaseOrderItemId										AS [PO Item ID],
+    PurchaseOrderLocation									AS [PO Location],
+    PurchaseOrderWarehouse									AS [PO Warehouse],
+    PurchaseOrderRail										AS Rail,
+    PurchaseOrderVendor										AS [PO Vendor],
+    PurchaseOrderCompanyZip,				
+    PurchaseOrderLineNumber									AS [PO Line Number],				
+    PurchaseOrderTagNumber,				
+    PurchaseOrderClassCode									AS [PO Class Code],
+    PurchaseOrderWeight										AS PurchaseOrderWeight,
+    PurchaseOrderWeightUnit,
+    PurchaseOrderWeightUnitPerBase,
+    PurchaseOrderFreight,
+    PurchaseOrderFreightUnit,
+    PurchaseOrderFreightUnitPerBase,
+    PurchaseOrderLineItemPrice,
+    PurchaseOrderExtendedPrice,
+    PurchaseOrderPriceUnit,
+    PurchaseOrderPriceUnitPerBase,
+    IF(PurchaseOrderSecondary='YES', 'Non-Prime', 'Prime')	AS [PO Secondary],
+    PurchaseOrderFiscalWeek									AS [PO Week],
+    PurchaseOrderFiscalMonth								AS [PO Month],
+    PurchaseOrderFiscalYear									AS [PO Year],
+    PurchaseOrderCarrier,
+    PurchaseOrderPOType,
+    PurchaseOrderCoilType									AS [PO Coil Type],
+    Num(PurchaseOrderWidth, '##.0000')						AS [PO Width],
+    PurchaseOrderThickness									AS [PO Thickness],
+    PurchaseOrderCountryOfOrigin							AS [PO Country of Origin],
+    PurchaseOrderRequestedShipDate							AS [PO Requested Ship Date],
+    PurchaseOrderOriginalShipDate							AS [PO Original Ship Date],
+    PurchaseOrderScheduleDate								AS [Delivery Schedule Date],
+	PurchaseOrderDate										AS [PO Date],
+    PurchaseOrderClosedDate,
+    PurchaseOrderCoating									AS [PO Coating],
+    PurchaseOrderStatus,
+    PurchaseOrderActive,
+	PurchaseOrderLength,
+    PurchaseOrderWarehouseZip,
+    PurchaseOrderTransportType,
+    IF(PurchaseOrderVendorMillOfOrigin='' And PurchaseOrderCountryOfOrigin='USA', 
+    	PurchaseOrderVendor, 
+        PurchaseOrderVendorMillOfOrigin)															AS [Mill Of Origin],
+    Date(Date#(PurchaseOrderFiscalMonth & '-' & PurchaseOrderFiscalYear, 'MM-YYYY'), 'MMM-YYYY') 	AS [PO Month Year],
+    IF(PurchaseOrderCountryOfOrigin='USA', 'Domestic', 'International')								AS [PO Origin],
+    //PurchaseOrderPurchaseOrderID 																	AS PurchaseOrderID,
+    PurchaseOrderPurchaseOrderID & ' - ' & PurchaseOrderScheduleDate								AS [PO ID - Delivery Schedule Date],
+	PurchaseOrderReceiptQuantity,
+    PurchaseOrderPurchaseOrderID & '|' & PurchaseOrderLineNumber & '|' & PurchaseOrderDeliveryScheduleId	AS %POReceiptQuantityKey,
+    PurchaseOrderPurchaseOrderID & '|' & PurchaseOrderItemId												AS %POReceiptKey,
+    PurchaseOrderPurchaseOrderID & '|' & PurchaseOrderLineNumber & '|' & PurchaseOrderDeliveryScheduleId 	AS %POLocationKey,
+    PurchaseOrderPurchaseOrderID & '|' & PurchaseOrderLineNumber 											AS %POKey
+
+    
+    From [$(vPathTransformQVDs)TR_PurchaseOrder.qvd](qvd);
+    
+    
+[Supply]:
+Load
+    SupplyPurchaseOrderID,
+    SupplyLineNumber,
+    SupplyLocation,
+    SupplyWarehouse,
+    SupplyVendor,
+    SupplyClassCode,
+    SupplyWeight,
+    SupplyExtendedPrice,
+    SupplyCountryOfOrigin,
+    SupplyRequestedShipDate,
+    SupplyScheduleDate,
+    SupplyCoating,
+    SupplyReceiptQuantity,
+    SupplyPurchaseOrderID & '|' & SupplyLineNumber & '|' & 	SupplyDeliveryScheduleId	AS %POReceiptQuantityKey
+    
+    From [$(vPathTransformQVDs)TR_Supply.qvd](qvd);
+
+
+[PurchaseOrderDeliverySchedule]:
+Load 
+    PurchaseOrderDeliveryScheduleId,
+    //PurchaseOrderId,
+    MillNumber,
+    ScheduleDate,
+    Weight,
+    WeightUnit,
+    LineNumber,
+    Location,
+    Warehouse,
+    IF(POTransportTypeDescription = '', 
+    	'N/A', POTransportTypeDescription) 	AS [Transportation Type],
+    VesselId,
+    VesselName, 
+    //IF(VesselName='', 'N/A', VesselName)	AS [Vessel Name],
+    VesselStatusId,
+    VesselActive,
+    VesselCurrentLocation,
+    IF(TRIM(TransportationReference) = '', 
+    	NULL(), TransportationReference)	AS TransportationReference,
+    ModifiedOn,
+    EquipmentId,
+    WayBillId,
+    PhaseCode,
+    OriginCity,
+    OriginState,
+    DestinationCity,
+    DestinationState,
+    LastStopCity,
+    LastStopState,
+    ETA,
+    ETAOriginal,
+    ETGRampStorageDeparture,
+    MarineTrafficShipId,
+    MarineTrafficLattitude,
+    MarineTrafficLongitude,
+    MarineTrafficShipName,
+    MarineTrafficDestination,
+    MarineTrafficETA,
+    PurchaseOrderId		AS VesselPOID,
+    GeoMakePoint(MarineTrafficLattitude, MarineTrafficLongitude) as VesselLocation,
+    PurchaseOrderId & '|' & LineNumber & '|' & PurchaseOrderDeliveryScheduleId	AS %POLocationKey,
+    PurchaseOrderId & '|' & LineNumber & '|' & 	PurchaseOrderDeliveryScheduleId	AS %POReceiptQuantityKey
+    
+    From [$(vPathTransformQVDs)TR_PurchaseOrderDeliverySchedule.qvd](qvd);
+  
+  
+//add rows for null vessel names to be populated, populate null transportation type w/N/A
+concatenate
+
+Load 
+	[PO ID] 					AS VesselPOID,
+    ''	 						AS VesselName,
+    'N/A'						AS [Transportation Type]
+
+ 	Resident [PurchaseOrder] 
+ 	WHERE Not Exists(VesselPOID, [PO ID]); //will only work with separate PO ID, because PurchaseOrderID will exist in the PO table above
+
+
+  
+//load vessel name separately: N/A if no delivery schedule vesselname, Null if transport type <> BOAT
+[Vessel_temp]:
+Load
+    %POReceiptQuantityKey AS %POReceiptQuantityKey,
+    VesselName
+    
+    Resident PurchaseOrderDeliverySchedule;
+
+JOIN
+
+Load
+	%POReceiptQuantityKey,
+    [PO Country of Origin]	AS VesselCOI,
+    PurchaseOrderTransportType AS [PO Transport Type]
+    
+    Resident [PurchaseOrder];
+    
+[Vessel]:
+Load Distinct
+	%POReceiptQuantityKey,
+    IF([PO Transport Type] <> 'BOAT', Null(),
+		IF(VesselName='', 'N/A', VesselName))	AS [Vessel Name]
+    
+    Resident Vessel_temp;
+
+DROP TABLE Vessel_temp;
+    
+
+
+//get fiscal month/year for requested ship date
+[PORequestedShipDate]:
+Load 
+	Date																AS [PO Requested Ship Date],
+    FiscalMonth															AS [PO Requested Ship Month],
+    FiscalQuarter														AS [PO Requested Ship Quarter],
+    FiscalYear															AS [PO Requested Ship Year],
+    Date(Date#(FiscalMonth & '-' & FiscalYear, 'MM-YYYY'), 'MMM-YYYY') 	AS [PO Requested Ship Month Year]
+    
+   	FROM [$(vPathTransformQVDs)TR_Date.qvd](qvd)
+    WHERE Exists([PO Requested Ship Date], Date);
+    
+    
+//link fiscal month/quarter/year to original ship date
+[POOriginalShipDate]:
+Load 
+	Date																AS [PO Original Ship Date],
+    FiscalMonth															AS [PO Original Ship Month],
+    FiscalQuarter														AS [PO Original Ship Quarter],
+    FiscalYear															AS [PO Original Ship Year],
+    Date(Date#(FiscalMonth & '-' & FiscalYear, 'MM-YYYY'), 'MMM-YYYY') 	AS [PO Original Ship Month Year]
+    
+   	FROM [$(vPathTransformQVDs)TR_Date.qvd](qvd)
+    WHERE Exists([PO Original Ship Date], Date);
+    
+    
+//link fiscal month/quarter/year to Delivery Schedule Date
+[DeliveryScheduleDate]:
+Load 
+	Date																AS [Delivery Schedule Date],
+    Weekstart(Date, 0, 0) 												AS [Delivery Schedule Week],
+    FiscalMonth															AS [Delivery Schedule Month],
+    FiscalQuarter														AS [Delivery Schedule Quarter],
+    FiscalYear															AS [Delivery Schedule Year],
+    Date(Date#(FiscalMonth & '-' & FiscalYear, 'MM-YYYY'), 'MMM-YYYY') 	AS [Delivery Schedule Month Year]
+    
+   	FROM [$(vPathTransformQVDs)TR_Date.qvd](qvd)
+    WHERE Exists([Delivery Schedule Date], Date);
+        
+        
+        
+[PurchaseOrderReceipt]:
+Load
+	PurchaseOrderReceiptPO												AS [PO Receipt PO ID],
+    PurchaseOrderReceiptItemId											AS [PO Receipt PO Item ID],
+    PurchaseOrderReceiptLineNo											AS [PO Receipt Line No],
+    PurchaseOrderReceiptMill,							
+    PurchaseOrderReceiptBOL												AS [PO Receipt BOL],
+    PurchaseOrderReceiptHeat											AS [PO Receipt Heat],
+    PurchaseOrderReceiptVendor											AS [PO Receipt Vendor],
+    PurchaseOrderReceiptLocation										AS [PO Receipt Location],
+    Text(PurchaseOrderReceiptLocation)									AS %PORECEIPTLOCATION,
+    PurchaseOrderReceiptWarehouse										AS [PO Receipt Warehouse],
+    PurchaseOrderReceiptTag												AS [PO Receipt Tag],
+    PurchaseOrderReceiptReceivedDate									AS [PO Receipt Date],
+    Num(PurchaseOrderReceiptWidth, '##.0000')							AS [PO Receipt Width],
+    PurchaseOrderReceiptThickness										AS [PO Receipt Thickness],
+    PurchaseOrderReceiptMicThickness									AS [PO Receipt Mic'd Thickness],
+    PurchaseOrderReceiptThicknessType									AS [PO Receipt Thickness Type],
+    PurchaseOrderReceiptClassCode										AS [PO Receipt Class Code],
+    PurchaseOrderReceiptCoatCode										AS [PO Receipt Coating],
+    PurchaseOrderReceiptCoilRef,					
+    PurchaseOrderReceiptActualWeight,					
+    PurchaseOrderReceiptLength,					
+    PurchaseOrderReceiptCoilType										AS [PO Receipt Coil Type],
+    PurchaseOrderReceiptStatus,					
+    PurchaseOrderReceiptSecondary										AS [PO Receipt Secondary],
+    If(PurchaseOrderReceiptSecondaryDefectCode = '', 'N/A', 
+        PurchaseOrderReceiptSecondaryDefectCode)						AS [PO Receipt Defect Code],
+    PurchaseOrderReceiptSteelPrice,
+    PurchaseOrderReceiptFreight,
+    PurchaseOrderReceiptExtension,
+    PurchaseOrderReceiptLastActivityDate,
+    PurchaseOrderReceiptWarehouseZip,
+    PurchaseOrderReceiptVirtualColumn,
+    PurchaseOrderReceiptYieldKSI,
+    PurchaseOrderReceiptTensileKSI,
+    PurchaseOrderReceiptElongationPercent,	
+    Num(PurchaseOrderReceiptYieldKSI, '###0.00')						AS [PO Receipt Yield KSI],
+    Num(PurchaseOrderReceiptTensileKSI, '###0.00')						AS [PO Receipt Tensile KSI],
+    IF(PurchaseOrderReceiptElongationPercent <> '', 
+		Num(PurchaseOrderReceiptElongationPercent, '#0.00 ') & '%')		AS [PO Receipt Elongation %],
+    PurchaseOrderReceiptTag												AS TagNumber,
+    //combo for lead times chart to avoid rec date measure aggregation
+    PurchaseOrderReceiptPO & ' - ' & PurchaseOrderReceiptReceivedDate 	AS [PO ID - Received Date],
+    PurchaseOrderReceiptPO & '|' & PurchaseOrderReceiptItemId			AS %POReceiptKey
+    
+    From [$(vPathTransformQVDs)TR_PurchaseOrderReceipt.qvd](qvd);
+
+
+[ReceiptDate]:
+LOAD 
+    Date 																AS [PO Receipt Date],
+    FiscalWeekYearly													AS [PO Receipt Week],
+    FiscalMonth															AS [PO Receipt Month],
+    FiscalQuarter														AS [PO Receipt Quarter],
+    FiscalYear															AS [PO Receipt Year],
+    Date(Date#(FiscalMonth & '-' & FiscalYear, 'MM-YYYY'), 'MMM-YYYY') 	AS [PO Receipt Month Year],
+    FiscalWeekYearly & '|' & FiscalMonth & '|' & FiscalYear				AS %ReceiptDateKey
+
+	FROM [$(vPathTransformQVDs)TR_Date.qvd](qvd)
+	WHERE Exists([PO Receipt Date], Date);
+    
+    
+[ReceiptWeekDate]:
+LOAD 
+    Date(MIN(Date))														AS [PO Receipt Week Date],
+    FiscalWeekYearly & '|' & FiscalMonth & '|' & FiscalYear				AS %ReceiptDateKey
+
+	FROM [$(vPathTransformQVDs)TR_Date.qvd](qvd)
+	WHERE Exists([PO Receipt Date], Date)
+    GROUP BY 
+    	FiscalWeekYearly,
+        FiscalMonth,
+        FiscalYear;
+        
+        
+        
+[PurchaseOrderReceiptNonPrime]:
+LOAD
+    NonPrimeTag				AS [PO Receipt Tag],
+    NonPrimeReceivedDate,
+    NonPrimeFiscalYear,
+    NonPrimeFiscalMonth,
+    NonPrimeVendor,
+    NonPrimeLocation,
+    NonPrimeClassCode,
+    NonPrimeThickness,
+    NonPrimeDollarsSavedBeforeYieldLoss,
+    NonPrimeYieldLoss,
+    NonPrimeDollarsSaved
+FROM [$(vPathTransformQVDs)TR_PurchaseOrderReceiptNonPrime.qvd](qvd);
+
+
+  
+  
+[CoilOnHand]: 
+Load 
+    CoilOnHandSteelTransactionID,
+    CoilOnHandSteelStatusID,
+    CoilOnHandOnHandDateFrom,
+    CoilOnHandOnHandDateTo,
+    CoilOnHandLocation													AS [On Hand Location],
+    Text(CoilOnHandLocation)											AS %ONHANDLOCATION,
+    CoilOnHandWarehouse													AS [On Hand Warehouse],
+    CoilOnHandClassCode													AS [On Hand Class Code],
+    CoilOnHandTagNumber													AS [On Hand Tag Number],
+    CoilOnHandHeat														AS [On Hand Heat],
+    CoilOnHandVendor													AS [On Hand Vendor],
+    CoilOnHandCountryOfOrigin											AS [Country of Origin],
+    IF(CoilOnHandMillOfOrigin='' And CoilOnHandCountryOfOrigin='USA', 
+    	CoilOnHandVendor, 
+          IF(CoilOnHandMillOfOrigin='', 'N/A', CoilOnHandMillOfOrigin))	AS [On Hand Mill of Origin],
+    IF(CoilOnHandSecondary='True', 'Non-Prime', 'Prime')				AS [On Hand Secondary],
+    CoilOnHandPurchaseOrderID,						
+    CoilOnHandReceivedDate												AS [On Hand Received Date],
+    CoilOnHandRecordAge													AS [On Hand Record Age],
+    NUM(CoilOnHandWidth, '##.0000')										AS CoilOnHandWidth,
+    CoilOnHandCoilType													AS [On Hand Coil Type],
+    CoilOnHandThickness,									
+    CoilOnHandCoatCode													AS [On Hand Coat],
+    CoilOnHandWeight,
+    CoilOnHandLength,
+    CoilOnHandPrice,
+    CoilOnHandTotalValue,
+    Num(CoilOnHandYieldKSI, '###0.00')									AS [On Hand Yield KSI],
+    Num(CoilOnHandTensileKSI, '###0.00')								AS [On Hand Tensile KSI],
+    IF(CoilOnHandElongationPercent <> '', 
+		Num(CoilOnHandElongationPercent, '#0.00 ') & '%')				AS [On Hand Elongation %],
+    CoilOnHandTagNumber													AS TagNumber,						//connect to po tables through tag number 
+    IF(CoilOnHandCountryOfOrigin='USA', 'Domestic', 'International')	AS [On Hand Origin],
+    CoilOnHandLocation & '|' & CoilOnHandWarehouse & '|' & CoilOnHandClassCode & '|' & NUM(CoilOnHandWidth, '##.0000')	AS %AllocatedKey
+    ,CoilOnHandTagNumber & CoilOnHandOnHandDateFrom AS %ONHANDKEY
+
+    From [$(vPathTransformQVDs)TR_CoilOnHand.qvd](qvd);
+    
+    
+//Get min date for On Hand Date Range
+[TEMP]: LOAD MIN((CoilOnHandOnHandDateFrom)) AS MinDate RESIDENT [CoilOnHand];
+Let OnHandStartDate = Peek('MinDate');
+DROP TABLE [TEMP];
+
+
+
+//Link Dates in the on hand date from, to range
+[Date]:
+LOAD 
+
+    DateKey,
+    Date				AS [On Hand Date],
+    DayName,
+    Week, 
+    Month,
+    MonthName,
+    Quarter,
+    Year,
+    FiscalWeek,
+    FiscalMonth			AS [On Hand Month],
+    FiscalQuarter,
+    FiscalYear			AS [On Hand Year],
+    FiscalWeekYearly
+    
+	FROM [$(vPathTransformQVDs)TR_Date.qvd](qvd)
+	WHERE (Date <= Today()) and (Date >= $(OnHandStartDate));
+    
+
+Inner Join IntervalMatch([On Hand Date])
+LOAD CoilOnHandOnHandDateFrom, CoilOnHandOnHandDateTo //, TagNumber
+Resident CoilOnHand;
+
+
+
+//Link each on hand fiscal month to the max date 
+[OnHandDate]:
+LOAD
+    Max(DateKey) AS DateKey,
+    Max(Date) AS OnHandDate,
+    FiscalMonth AS OnHandFiscalMonth,
+    FiscalYear AS OnHandFiscalYear,
+    Date(Date#(FiscalMonth & '-' & FiscalYear, 'MM-YYYY'), 'MMM-YYYY') AS OnHandFiscalMonthYear
+
+    FROM [$(vPathTransformQVDs)TR_Date.qvd](qvd)
+	WHERE (Date <= Today()) and (Date >= $(OnHandStartDate))
+    GROUP BY FiscalMonth, FiscalYear;
+    
+JOIN
+//Link each on hand week to the max date 
+LOAD
+    DateKey		AS DateKey,
+    Date 		AS [On Hand Week]
+
+    FROM [$(vPathTransformQVDs)TR_Date.qvd](qvd)
+	WHERE (Date <= Today()) and (Date >= $(OnHandStartDate)) and (Weekday(Date)='Fri');
+
+
+
+//ON Hand Record Age mapping
+[OnHandRecordAge_Temp]:
+LOAD DISTINCT
+	TagNumber,
+	[On Hand Received Date],
+    CoilOnHandOnHandDateFrom,
+    CoilOnHandOnHandDateTo
+    
+RESIDENT CoilOnHand;
+
+
+JOIN 
+
+LOAD DISTINCT
+	[On Hand Date],
+    CoilOnHandOnHandDateFrom,
+    CoilOnHandOnHandDateTo
+RESIDENT Date;
+
+JOIN
+//[RecordAgeMonthYear]:
+LOAD
+    Max(Date) AS [On Hand Date],
+    Date(Date#(FiscalMonth & '-' & FiscalYear, 'MM-YYYY'), 'MMM-YYYY') AS RecordAgeFiscalMonthYear
+
+    FROM [$(vPathTransformQVDs)TR_Date.qvd](qvd)
+	WHERE (Date <= Today()) and (Date >= $(OnHandStartDate))
+    GROUP BY FiscalMonth, FiscalYear;
+JOIN
+//record age week
+LOAD
+    Date AS [On Hand Date],
+    Date AS [Record Age Week]
+
+    FROM [$(vPathTransformQVDs)TR_Date.qvd](qvd)
+	WHERE (Date <= Today()) and (Date >= $(OnHandStartDate)) and (Weekday(Date)='Fri');
+
+
+
+[OnHandRecordAge]:
+LOAD DISTINCT
+	TagNumber & CoilOnHandOnHandDateFrom 				AS %ONHANDKEY,
+    TagNumber											AS RecordAgeTagNumber,
+    [On Hand Date]										AS [Record Age Date],
+    [Record Age Week]									AS [Record Age Week],
+    RecordAgeFiscalMonthYear							AS RecordAgeFiscalMonthYear,
+    [On Hand Date] - [On Hand Received Date] 			AS RecordAge,
+    If([On Hand Date] - [On Hand Received Date] > 120,
+    	'> 120 days', '0-120 days')    					AS RecordAgeRange
+
+    
+   	RESIDENT OnHandRecordAge_Temp;
+
+
+
+DROP TABLE OnHandRecordAge_Temp;
+
+
+
+//Days of Inventory: always as of today
+[DaysOfInventory]:
+LOAD
+    InventoryLocation,
+    InventoryClassCode,
+    InventoryCoilType,
+    IF(InventorySecondary='True', 'Non-Prime', 'Prime')	AS InventorySecondary,
+    InventoryOnHandWeight,
+    InventoryProducedWeight,
+    Today() AS OnHandDate
+    
+	FROM [$(vPathTransformQVDs)TR_DaysOfInventory.qvd](qvd);
+
+
+
+
+
+//tables from upload
+[PlannedBuy]:
+Load 
+	*,
+    Date(Date#(PlannedBuyMonth & '-' & PlannedBuyYear, 'MM-YYYY'), 'MMM-YYYY') AS SupplyFiscalMonthYear
+    
+    From [$(vPathTransformQVDs)TR_PlannedBuy.qvd](qvd);
+
+
+[SalesForecast]:
+Load 
+	*,
+    Date(Date#(SalesForecastMonth & '-' & SalesForecastYear, 'MM-YYYY'), 'MMM-YYYY') AS SupplyFiscalMonthYear
+    
+    From [$(vPathTransformQVDs)TR_SalesForecast.qvd](qvd);
+    
+    
+[MarketPricing]:
+Load 
+    CRUPricingId 																						AS PricingId,
+    CRUPricingYear 																						AS PricingYear,
+    CRUPricingMonth 																					AS PricingMonth,
+    CRUPricingWeek 																						AS PricingWeek,
+    CRUPricingAmount 																					AS PricingAmount,
+    Date(Date#(CRUPricingMonth & '-' & CRUPricingYear, 'MM-YYYY'), 'MMM-YYYY') 							AS PricingMonthYear,
+    Date(If(Weekday(Makedate(CRUPricingYear, CRUPricingMonth))='Wed', 
+    	MakeDate(CRUPricingYear, CRUPricingMonth),
+		WeekStart(MakeDate(CRUPricingYear, CRUPricingMonth),1,2)) + 7*(CRUPricingWeek-1), 'M/D/YYYY')	AS [Pricing Week] //weds date of week		
+    
+    From [$(vPathTransformQVDs)TR_CRUPricing.qvd](qvd);
+    
+    
+
+//link upload table dates
+[SupplyDate]:
+LOAD 
+	Date AS SupplyDate,
+	FiscalYear AS SupplyFiscalYear,
+    FiscalMonth AS SupplyFiscalMonth,
+    FiscalQuarter AS SupplyFiscalQuarter,
+    FiscalWeekYearly AS SupplyFiscalWeek,
+    Date(Date#(FiscalMonth & '-' & FiscalYear, 'MM-YYYY'), 'MMM-YYYY') AS SupplyFiscalMonthYear
+
+    
+	FROM [$(vPathTransformQVDs)TR_Date.qvd](qvd);   
+
+
+    
+
+//purchase order total weight
+[POWEIGHT]:
+LOAD
+	%POKey,
+    %POKey AS POKeyTotalWeight,
+    SUM(PurchaseOrderWeight) 	AS POTotalWeight
+    
+    
+    Resident [PurchaseOrder]
+    GROUP BY %POKey;
+    
+    
+//purchase order price --separate out and load for distinct po/po line number to avoid delivery schedule blow out
+[POPRICE]:
+LOAD DISTINCT 
+	%POKey, PurchaseOrderExtendedPrice AS POPrice    
+    
+    Resident [PurchaseOrder];
+    
+    
+    
+[Allocated]:
+LOAD
+    ClassCode																	AS AllocatedClassCode,
+    Location																	AS AllocatedLocation,
+    Warehouse																	AS AllocatedWarehouse,
+    NUM(Width, '##.0000')														AS AllocatedWidth,
+    Allocated																	AS AllocatedWeight,
+    Location & '|' & Warehouse & '|' & ClassCode & '|' & NUM(Width, '##.0000')	AS %AllocatedKey
+	
+    FROM [$(vPathTransformQVDs)TR_SteelRequirements.qvd](qvd);
+    
+    
+    
+[SteelLinkedTable]:
+LOAD
+    ClassCode																	AS [Steel Class Code],
+    Location																	AS [Steel Location],
+    Text(Location)																AS %STEELLOCATION,
+    Warehouse																	AS [Steel Warehouse],
+    NUM(Width, '##.0000')														AS [Steel Width],
+    Location & '|' & Warehouse & '|' & ClassCode & '|' & NUM(Width, '##.0000')	AS %AllocatedKey
+	
+    FROM [$(vPathTransformQVDs)TR_SteelRequirements.qvd](qvd);
+    
+Concatenate
+
+Load 
+    CoilOnHandClassCode													AS [Steel Class Code],
+    CoilOnHandLocation													AS [Steel Location],
+    Text(CoilOnHandLocation)											AS %STEELLOCATION,
+    CoilOnHandWarehouse													AS [Steel Warehouse],
+    NUM(CoilOnHandWidth, '##.0000')										AS [Steel Width],
+    CoilOnHandLocation & '|' & CoilOnHandWarehouse & '|' & CoilOnHandClassCode & '|' & NUM(CoilOnHandWidth, '##.0000')	AS %AllocatedKey
+    
+    From [$(vPathTransformQVDs)TR_CoilOnHand.qvd](qvd);
+
+
+
+
+//Operations Data
+[OpsProduced]:
+LOAD
+    OpsProducedProductionId						AS ProductionId,
+    OpsProducedPartType							AS [Produced Part Type],
+    OpsProducedPartCategory,
+    OpsProducedPartClass
+
+	From [$(vPathTransformQVDs)TR_OperationsProduced.qvd](qvd);
+    
+    
+[SupplyConsumed]:
+LOAD
+    ConsumedProductionId					AS ProductionId,
+    ConsumedProductionDate					AS [Production Date],
+    Weekstart(ConsumedProductionDate, 0, 0) AS [Production Week],
+    ConsumedFiscalMonth						AS [Production Month],
+    ConsumedFiscalYear						AS [Production Year],
+    Date(Date#(ConsumedFiscalMonth & '-' 
+    	& ConsumedFiscalYear, 'MM-YYYY'), 
+        	'MMM-YYYY') 					AS ProductionMonthYear,
+    ConsumedProductionLocation				AS [Production Location],
+    Text(ConsumedProductionLocation)		AS %PRODUCTIONLOCATION,
+    ConsumedWorkCenterDescription,
+    ConsumedWorkOrderShiftId,
+    ConsumedWorkOrderShiftName,
+    ConsumedRawMaterialLength,
+    ConsumedRawMaterialWeight,
+    ConsumedSteelId,
+    ConsumedTagNumber						AS TagNumber,
+    ConsumedCoilRefernceNo,
+    ConsumedWarehouse						AS [Consumed Warehouse],
+    ConsumedWarehouseZip,
+    ConsumedVendor							AS [Consumed Vendor],
+    ConsumedClassCode						AS [Consumed Class Code],
+    ConsumedCoating,
+    ConsumedReceivedDate,
+    ConsumedUsedDate,
+    NUM(ConsumedWidth, '##.0000')			AS ConsumedWidth,
+    ConsumedThickness,
+    ConsumedSteelStatus,
+    ConsumedHeat,
+    ConsumedItemType,
+    ConsumedPurchaseOrderID,
+    ConsumedCountryOfOrigin,
+    IF(ConsumedMillOfOrigin='' 
+    	AND ConsumedCountryOfOrigin='USA', 
+    		ConsumedVendor, 
+        ConsumedMillOfOrigin)				AS [Consumed Mill of Origin],
+    IF(ConsumedSecondary='True', 
+    	'Non-Prime', 'Prime') 				AS ConsumedSecondary,
+    IF(ConsumedCountryOfOrigin='USA', 
+    	'Domestic', 'International')		AS [Consumed Origin],
+    'Part'									AS ProductionType
+    
+	FROM [$(vPathTransformQVDs)TR_SupplyConsumed.qvd](qvd)
+    WHERE EXISTS(ProductionId, ConsumedProductionId);
+
+
+Concatenate
+LOAD
+    ConsumedProductionId					AS ProductionId,
+    ConsumedProductionDate					AS [Production Date],
+    Weekstart(ConsumedProductionDate, 0, 0) AS [Production Week],
+    ConsumedFiscalMonth						AS [Production Month],
+    ConsumedFiscalYear						AS [Production Year],
+    Date(Date#(ConsumedFiscalMonth & '-' & 
+    	ConsumedFiscalYear, 'MM-YYYY'), 
+        	'MMM-YYYY')						AS ProductionMonthYear,
+    ConsumedProductionLocation				AS [Production Location],
+    Text(ConsumedProductionLocation)		AS %PRODUCTIONLOCATION,
+    ConsumedWorkCenterDescription,
+    ConsumedWorkOrderShiftId,
+    ConsumedWorkOrderShiftName,
+    ConsumedRawMaterialLength,
+    ConsumedRawMaterialWeight,
+    ConsumedSteelId,
+    ConsumedTagNumber						AS TagNumber,
+    ConsumedCoilRefernceNo,
+    ConsumedWarehouse						AS [Consumed Warehouse],
+    ConsumedWarehouseZip,
+    ConsumedVendor							AS [Consumed Vendor],
+    ConsumedClassCode						AS [Consumed Class Code],
+    ConsumedCoating,
+    ConsumedReceivedDate,
+    ConsumedUsedDate,
+    NUM(ConsumedWidth, '##.0000')			AS ConsumedWidth,
+    ConsumedThickness,
+    ConsumedSteelStatus,
+    ConsumedHeat,
+    ConsumedItemType,
+    ConsumedPurchaseOrderID,
+    ConsumedCountryOfOrigin,
+    IF(ConsumedMillOfOrigin='' 
+    	AND ConsumedCountryOfOrigin='USA', 
+    		ConsumedVendor, 
+        ConsumedMillOfOrigin)				AS [Consumed Mill of Origin],
+    IF(ConsumedSecondary='True', 
+    	'Non-Prime', 'Prime') 				AS ConsumedSecondary,
+    IF(ConsumedCountryOfOrigin='USA', 
+    	'Domestic', 'International')		AS [Consumed Origin],
+    ConsumedProducedSlitWeight				AS ProducedSlitWeight,
+    'Slit'									AS ProductionType
+    
+	FROM [$(vPathTransformQVDs)TR_SupplyConsumed.qvd](qvd)
+    WHERE NOT EXISTS(ProductionId, ConsumedProductionId) AND ConsumedWorkCenterDescription LIKE '*SLITTER*';
+    
+    
+//Prevent Dup Steel Measures
+[SupplyConsumedSteel]:
+LOAD DISTINCT
+	ConsumedTagNumber 		AS TagNumber,
+    ConsumedSteelLength,
+    ConsumedSteelActualWeight,
+    ConsumedPrice,
+    ConsumedTotalValue
+    
+	FROM [$(vPathTransformQVDs)TR_SupplyConsumed.qvd](qvd)
+    WHERE EXISTS(TagNumber, ConsumedTagNumber);
+
+
+    
+[ProductionWorkingDays]:
+LOAD
+	Date 																AS [Production Date],
+    WorkingDays 														AS ProductionWorkingDays
+	
+	FROM [$(vPathTransformQVDs)TR_WorkingDays.qvd](qvd)
+    WHERE Exists([Production Date], Date);
+    
+
+//coalesce location from delivery schedule with purchase order for pos w no ds
+[Location_Temp]:
+LOAD
+	%POLocationKey,
+    [PO Location]
+    
+    RESIDENT PurchaseOrder;
+    
+join
+LOAD
+	%POLocationKey,
+    Location
+    
+    RESIDENT PurchaseOrderDeliverySchedule;
+    
+[Location]:
+LOAD DISTINCT
+	%POLocationKey,
+    COALESCE(Location, [PO Location]) AS Location,
+    Text(COALESCE(Location, [PO Location])) AS %LOCATION
+    
+    RESIDENT [Location_Temp];
+
+DROP TABLE Location_Temp;
+DROP FIELD Location, %POLocationKey FROM PurchaseOrderDeliverySchedule;
+
+
+
+//Finished Goods Receipt
+[FinishedGoodsReceipt]:
+LOAD
+    FinishedGoodsReceiptPO,
+    FinishedGoodsReceiptPOItemId,
+    FinishedGoodsReceiptLineNo,
+    FinishedGoodsPartTicketId,
+    FinishedGoodsReceiptDate			AS [FG Receipt Date],
+    FinishedGoodsReceiptVendor			AS [FG Receipt Vendor],
+    FinishedGoodsReceiptLocation		AS [FG Receipt Location],
+    Text(FinishedGoodsReceiptLocation)	AS %FGRECEIPTLOCATION,
+    FinishedGoodsReceiptWarehouse,
+    FinishedGoodsReceiptWarehouseZip,
+    FinishedGoodsPartLength,
+    FinishedGoodsPartNumber				AS [FG Receipt Part No.],
+    FinishedGoodsPartDescription,	
+    FinishedGoodsPartType				AS [FG Receipt Part Type],
+    FinishedGoodsPartCategory			AS [FG Receipt Part Category],
+    FinishedGoodsPartClass				AS [FG Receipt Part Class],
+    FinishedGoodsQuantity,
+    FinishedGoodsQuantityUnit,
+    FinishedGoodsQuantityUnitsPerBase,
+    FinishedGoodsActualWeight,
+    FinishedGoodsPartTicketCost,
+    FinishedGoodsTotalValue,
+    FinishedGoodsReceiptPO & '|' & FinishedGoodsReceiptPOItemId			AS %POReceiptKey
+	
+    FROM [$(vPathTransformQVDs)TR_FinishedGoodsReceipt.qvd](qvd);
+
+//link upload table dates
+[FGReceiptDate]:
+LOAD 
+	Date 				AS [FG Receipt Date],
+	FiscalYear 			AS [FG Receipt Year],
+    FiscalMonth 		AS [FG Receipt Month],
+    Date(Date#(FiscalMonth & '-' & FiscalYear, 'MM-YYYY'), 'MMM-YYYY') AS [FG Receipt Month Year],
+    FiscalWeekYearly & '|' & FiscalMonth & '|' & FiscalYear				AS %FGReceiptDateKey
+
+
+	FROM [$(vPathTransformQVDs)TR_Date.qvd](qvd)
+    WHERE Exists([FG Receipt Date], Date);   
+
+[FGReceiptWeekDate]:
+LOAD 
+    Date(MIN(Date))														AS [FG Receipt Week],
+    FiscalWeekYearly & '|' & FiscalMonth & '|' & FiscalYear				AS %FGReceiptDateKey
+
+	FROM [$(vPathTransformQVDs)TR_Date.qvd](qvd)
+	WHERE Exists([FG Receipt Date], Date)
+    GROUP BY 
+    	FiscalWeekYearly,
+        FiscalMonth,
+        FiscalYear;
+
+///$tab 2.1 Variables
+Let vTopBottomAmount = 10;
+Let vSalesAbove = 0;
+
+//Count of working days in the past 3 months for the days of inventory calculation
+[DOIWorkingDays]:
+LOAD 
+	MAX(WorkingDays3Month) AS WorkingDays3Month//all the same value
+	FROM [$(vPathTransformQVDs)TR_DaysOfInventory.qvd](qvd);
+
+Let DOIWorkingDays = Peek('WorkingDays3Month');
+
+DROP TABLE [DOIWorkingDays];
+
+
+//Market Pricing sheet variables
+Let vMaxPricingWeek = '=Max([Pricing Week])';
+Let vMaxPricingYear = '=Max({1} PricingYear)';
+Let vSecondMaxPricingWeek = '=Max([Pricing Week], 2)';
+Let vPrevMonthPricingWeek = '=Max([Pricing Week], 5)'; //prev month defined as 4 weeks prior to current/max
+Let vMaxPricingWeekOverall = '=Max({1} [Pricing Week])';
+///$tab 2.2 Total Mapping
+[POLocationTotal]:
+Load
+	[Location] as [PO Location],
+    [Location] as [POLocationTotal]
+	Resident Location;
+
+Concatenate 
+
+Load
+	[Location]  as [PO Location],
+    'Total' 	as [POLocationTotal]
+	Resident Location;
+    
+[POOriginTotal]:
+Load
+	[PO Origin] as [PO Origin],
+    [PO Origin] as [POOriginTotal]
+	Resident [PurchaseOrder];
+
+Concatenate 
+
+Load
+	[PO Origin] as [PO Origin],
+    'Total'     as [POOriginTotal]
+	Resident [PurchaseOrder];
+    
+[POReceiptLocationTotal]:
+Load
+	[PO Receipt Location] as [PO Receipt Location],
+    [PO Receipt Location] as [POReceiptLocationTotal]
+	Resident [PurchaseOrderReceipt];
+
+Concatenate 
+
+Load
+	[PO Receipt Location] as [PO Receipt Location],
+    'Total' 			  as [POReceiptLocationTotal]
+	Resident [PurchaseOrderReceipt];
+    
+    
+[POReceiptVendorTotal]:
+Load
+	[PO Receipt Vendor] as [PO Receipt Vendor],
+    [PO Receipt Vendor] as [POReceiptVendorTotal]
+	Resident [PurchaseOrderReceipt];
+
+Concatenate 
+
+Load
+	[PO Receipt Vendor]	as [PO Receipt Vendor],
+    'Total' 			as [POReceiptVendorTotal]
+	Resident [PurchaseOrderReceipt];
+
+
+//Coil On Hand Total Mapping
+[CoilOnHandLocationTotal]:
+Load
+	[On Hand Location] as [On Hand Location],
+    [On Hand Location] as [OnHandLocationTotal]
+	Resident [CoilOnHand];
+
+Concatenate 
+
+Load
+	[On Hand Location] as [On Hand Location],
+    'Total' 		   as [OnHandLocationTotal]
+	Resident [CoilOnHand];
+
+
+[CoilOnHandRecordAgeTotal]:
+Load
+	RecordAgeRange 	as RecordAgeRange,
+    RecordAgeRange  as [OnHandRecordAgeTotal]
+	Resident [OnHandRecordAge];
+
+Concatenate 
+
+Load
+	RecordAgeRange 		as RecordAgeRange,
+    'Total' 		   	as [OnHandRecordAgeTotal]
+	Resident [OnHandRecordAge];
+
+
+//FG Receipt Total Mapping
+[FGReceiptLocationTotal]:
+Load
+	[FG Receipt Location] as [FG Receipt Location],
+    [FG Receipt Location] as [FGReceiptLocationTotal]
+	Resident [FinishedGoodsReceipt];
+
+Concatenate 
+
+Load
+	[FG Receipt Location] as [FG Receipt Location],
+    'Total' 			  as [FGReceiptLocationTotal]
+	Resident [FinishedGoodsReceipt];
+    
+    
+[FGReceiptPartCategoryTotal]:
+Load
+	[FG Receipt Part Category] as [FG Receipt Part Category],
+    [FG Receipt Part Category] as [FGReceiptPartCategoryTotal]
+	Resident [FinishedGoodsReceipt];
+
+Concatenate 
+
+Load
+	[FG Receipt Part Category]	as [FG Receipt Part Category],
+    'Total' 					as [FGReceiptPartCategoryTotal]
+	Resident [FinishedGoodsReceipt];
+///$tab testing - extract coilonhand qvd
+//MyData:
+//Load * FROM [lib://DataFiles/MyData.qvd] (qvd);
+
+//Store MyData into [lib://GoogleDrive/MyData.qvd] (qvd);
+
+////////from data load editor//Let vPathDataSource='lib://03.Extract:AWS-BI-S3/Qlik-Test/';
+
+
+// MyCOHData:
+// Load * FROM [lib://01.Extract:DataFiles/EX_CoilOnHand.qvd] (qvd);
+//Store MyCOHData into [lib://01.Raymond:Amazon_S3_V2_X/DevTesting/20230906_Chita/EX_CoilOnHand_01Raymond_FromQlik.txt] (txt);
+
+
+
+Store CoilOnHand into [lib://01.Raymond:Amazon_S3_V2_X/DevTesting/20230906_Chita/CoilOnHand_Table_FromQlik.txt] (txt);
+
+// LOAD
+//     SteelTransactionID,
+//     SteelStatusID,
+//     OnHandDateFrom,
+//     OnHandDateTo,
+//     Location,
+//     Warehouse,
+//     ClassCode,
+//     TagNumber,
+//     Heat,
+//     Vendor,
+//     CountryOfOrigin,
+//     MillOfOrigin,
+//     Secondary,
+//     PurchaseOrderID,
+//     ReceivedDate,
+//     RecordAge,
+//     Width,
+//     CoilType,
+//     Thickness,
+//     CoatCode,
+//     Weight,
+//     "Length",
+//     Price,
+//     TotalValue,
+//     YieldKSI,
+//     TensileKSI,
+//     ElongationPercent
+// FROM [lib://01.Extract:DataFiles/EX_CoilOnHand.qvd]
+// (qvd);
+
+
+
+
+
+
+
+// LOAD
+//     SteelTransactionID,
+//     SteelStatusID,
+//     OnHandDateFrom,
+//     OnHandDateTo,
+//     Location,
+//     Warehouse,
+//     ClassCode,
+//     TagNumber,
+//     Heat,
+//     Vendor,
+//     CountryOfOrigin,
+//     MillOfOrigin,
+//     Secondary,
+//     PurchaseOrderID,
+//     ReceivedDate,
+//     RecordAge,
+//     Width,
+//     CoilType,
+//     Thickness,
+//     CoatCode,
+//     Weight,
+//     "Length",
+//     Price,
+//     TotalValue,
+//     YieldKSI,
+//     TensileKSI,
+//     ElongationPercent
+// FROM [lib://01.Extract:DataFiles/EX_CoilOnHand.qvd]
+// (qvd);
+
+
+
+
+
+
+
+// LOAD
+//     @1,
+//     @2,
+//     @3,
+//     @4
+// FROM [lib://01.Raymond:Amazon_S3_V2_X/DevTesting/20230906_Chita/TestFile.txt]
+// (txt, codepage is 28591, no labels, delimiter is ',', msq);
+
+
+///$tab -----EXIT SCRIPT-----
+Exit Script;
